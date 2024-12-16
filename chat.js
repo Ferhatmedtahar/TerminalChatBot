@@ -1,3 +1,13 @@
+/*
+ - Quick note about scaling issues with chat based applications
+ - token limit and handle that properly
+ - handle prompt injection and other issues
+ - handle chat history
+ - temperature to get more creative or never lie
+ - fine tuning 
+ - document QA:RAG retrieval assistant generation
+ - handle steaming long responses
+*/
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { configDotenv } from "dotenv";
 import readline from "node:readline";
