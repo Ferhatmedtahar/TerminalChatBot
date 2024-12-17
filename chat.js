@@ -70,7 +70,7 @@ const chat = async () => {
       rl.close();
       return;
     }
-    process.stdout.write("AI: Thinking...\n\n");
+    process.stdout.write("\nAI: Thinking...\n\n");
     const userMessage = formatMessage(userInput);
     const modelResponse = await newMessage(history, userMessage);
 
