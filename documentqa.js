@@ -67,3 +67,17 @@ const query = async () => {
   );
 };
 query();
+/*
+DOCUMENT ,...-->EMBEDDING ,VECTOR -->STORE
+MEMORY VECTOR STORE : ALLOW US to search based on the meaning 
+
+document :its a piece of information that is stored in a computer system or a database. 
+it can be in various formats such as text, youtube transcript, audio, video, images, pdf ,...
+
+store --> [embedding,embedding.... , vector] 
+
+vector is a numirical representation of data , stored in memory vector store 
+for faster access and allowing semantic search 
+
+loader
+ */
