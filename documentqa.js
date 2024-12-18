@@ -6,13 +6,13 @@ import { CharacterTextSplitter } from "langchain/text_splitter";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 
 const question = process.argv[2] || "hi";
-const video = `https://youtu.be/zR_iuq2evXo?si=cG8rODgRgXOx9_Cn`;
+const video = `https://youtu.be/PkZNo7MFNFg?si=iXBVR3FUfekxqAQA`;
 
 const genAI = new GoogleGenerativeAI(process.env.TOKEN);
 const model = "gemini-pro";
 const geminiEmbeddings = new GoogleGenerativeAIEmbeddings({
   apiKey: process.env.TOKEN,
-  modelName: "embedding-001", // Use the correct embedding model name
+  modelName: "embedding-001",
 });
 
 const createStore = (docs) =>
@@ -25,9 +25,9 @@ export const docsFromYTVideo = async (video) => {
   });
   return loader.loadAndSplit(
     new CharacterTextSplitter({
-      separator: " ",
-      chunkSize: 2500,
-      chunkOverlap: 100,
+      separator: ". ", // Split by sentences
+      chunkSize: 1000, // Reduce chunk size
+      chunkOverlap: 200, // Increase overlap
     })
   );
 };
@@ -40,7 +40,7 @@ const loadStore = async () => {
 
 const query = async () => {
   const store = await loadStore();
-  const results = await store.similaritySearch(question, 2);
+  const results = await store.similaritySearch(question, 4); // Get more results
 
   const response = await genAI.getGenerativeModel({ model }).generateContent({
     contents: [
@@ -48,10 +48,13 @@ const query = async () => {
         role: "user",
         parts: [
           {
-            text: `Answer the following question using the provided context. If you cannot answer the question with the context, don't lie and make up stuff. Just say you need more context.
-              Question: ${question}
+            text: `Use the following transcript from a YouTube video to answer the user's question. The transcript is divided into sections, and the sections relevant to the question are below. If you can't answer from this transcript alone, just say you need more context.
+
+                Question: ${question}
     
-              Context: ${results.map((r) => r.pageContent).join("\n")}`,
+                Transcript sections: ${results
+                  .map((r) => r.pageContent)
+                  .join("\n")}`,
           },
         ],
       },
@@ -64,18 +67,3 @@ const query = async () => {
   );
 };
 query();
-/*
-ducument qa
-
-- document qa: like white paper ai : scientific paper like based on it i will ask question and get answer
-
-- it need to be accurate , efficient and easy to use
-
-document loaders!!
-if you want to teach your ai sometyhing 
-
----
-we need to lead and split our data into chunks  so that we dont need to process all the data for one question
- 
-
-*/
