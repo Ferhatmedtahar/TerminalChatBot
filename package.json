@@ -12,6 +12,12 @@
   "description": "a chatbot that uses gemini to answer questions within the terminal",
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
-    "dotenv": "^16.4.7"
+    "@langchain/community": "^0.3.19",
+    "@langchain/core": "^0.3.24",
+    "@langchain/google-genai": "^0.1.5",
+    "dotenv": "^16.4.7",
+    "langchain": "^0.3.7",
+    "youtube-transcript": "^1.2.1",
+    "youtubei.js": "^12.2.0"
   }
 }
