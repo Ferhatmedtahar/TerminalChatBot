@@ -1,5 +1,12 @@
 /*
 there are list of output parsers in langchain
+StringOutputParser string
+CommaSeparatedListOutputParser array of strings js
+StructuredOutputParser : to convert a string to object and for example json to communicate
+
+for more complcated object we use zod schema
+
+
 */
 import {
   CommaSeparatedListOutputParser,
@@ -8,6 +15,8 @@ import {
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import "dotenv/config";
+import { StructuredOutputParser } from "langchain/output_parsers";
+import { z } from "zod";
 
 const model = new ChatGoogleGenerativeAI({
   model: "gemini-2.0-flash-exp",
@@ -40,4 +49,37 @@ async function callListOutputParser() {
   return await chain.invoke({ input: "happy" });
 }
 
-console.log(await callListOutputParser());
+async function callStructuredOutputParser() {
+  const prompt = ChatPromptTemplate.fromTemplate(`
+    extract the name and age of the person from this sentence {input} , formatting :{json} `);
+
+  const outputParser = StructuredOutputParser.fromNamesAndDescriptions({
+    name: "the name of the person",
+    age: "the age of the person",
+    country: "the country of the person",
+  });
+  // return
+  const chain = prompt.pipe(model).pipe(outputParser);
+  return await chain.invoke({
+    input: "my name is tahar and im 20 years old",
+    json: outputParser.getFormatInstructions(),
+  });
+}
+
+async function callZodOutputParser() {
+  const prompt = ChatPromptTemplate.fromTemplate(`
+    extract the ingredients from this recipe {input} , formatting :{json} `);
+
+  const outputParser = StructuredOutputParser.fromZodSchema(
+    z.object({
+      name: z.string(),
+      ingredients: z.array(z.string()),
+    })
+  );
+  const chain = prompt.pipe(model).pipe(outputParser);
+  return await chain.invoke({
+    input: "bread is easy to make , you need flour and water and oil and salt",
+    json: outputParser.getFormatInstructions(),
+  });
+}
+console.log(await callZodOutputParser());

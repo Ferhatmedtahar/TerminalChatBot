@@ -28,6 +28,18 @@ steps : create a model , than create a prompt template , than create a chain to 
 -----
 now we need to format our response using output parser
  to be able to control the structure and the format of our output
+we did  string , array , structured output parser : object , more complex using zod
+ --------
+ now we want to do CHATTING WITH DOCUMENT USING RETRIEVAL CHAINS
+to talk about something he cant answer we need to use RETRIEVAL CHAINS
+-we need to do retrieval to feed the llm with context of a page
+so we use documents and chain that allw us to use these documents as array
+
+#########################
+for now we could create a model ask it generic questions, used prompt templates and 
+controlled our output than we teach the model using documents and retrieval chains .
+#########################
+
 
 
 */
