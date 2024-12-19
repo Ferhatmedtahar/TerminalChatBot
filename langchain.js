@@ -1,5 +1,6 @@
 /* give us ability to connect our ai to external data sources like databases , text-files , apis , etc
-we need to give to the model api key and when  we create am inctance of it we can pass parameters like
+we need to give to the model api key and when  we create am inctance of it.
+ we can pass parameters like
 
 modelName
 temperature
@@ -10,7 +11,7 @@ model: "gemini-pro"
 maxRetries: 3 means if the request fails it will retry 3 times
 
 
------
+----- 
 we can call an ai model after creating it by 
 .invoke {for single input}
 .batch {for multiple inputs}
@@ -22,6 +23,12 @@ here we created our chat bot using langchain
 so we can now ask and recieve GENERIC answers
 
 so we need to create a prompt template
+steps : create a model , than create a prompt template , than create a chain to hook them together
+
+-----
+now we need to format our response using output parser
+ to be able to control the structure and the format of our output
+
 
 */
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
