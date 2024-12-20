@@ -43,9 +43,15 @@ and then create the documents --document loader--
 #########################
 for now we could create a model ask it generic questions, used prompt templates and 
 controlled our output than we teach the model using documents and retrieval chains .
+-1 now we loaded data using : Cheerio web base loader  
+-2 split it into chunks using   : RecursiveCharacterTextSplitter for example
+-3 create new embedding 
+-4 create vector store using the embedding and the chunks
+-5 create a retrieval chain ->use it to ask questions
+
 #########################
 
-
+- now we will add chat history
 
 */
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
