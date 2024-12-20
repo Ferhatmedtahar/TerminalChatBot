@@ -1,44 +1,109 @@
 /*
 DOCUMENT: its an object that contain text and metadata like the source :url, pdf 
 createStuffDocumentsChain allow us to pass multiple documents */
-import { Document } from "@langchain/core/documents";
-import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
 
 //old
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+// import { ChatPromptTemplate } from "@langchain/core/prompts";
+// import { Document } from "@langchain/core/documents"; no need for it now
+
+//!!!
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { CheerioWebBaseLoader } from "@langchain/community/document_loaders/web/cheerio";
+import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { MemoryVectorStore } from "langchain/vectorstores/memory";
+
 import "dotenv/config";
 
-const model = new ChatGoogleGenerativeAI({
-  model: "gemini-2.0-flash-exp",
-  temperature: 0.7,
-  verbose: true,
-  maxOutputTokens: 1000,
+const question = process.argv[2] || "no question was given";
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+const model = "gemini-pro";
+const geminiEmbeddings = new GoogleGenerativeAIEmbeddings({
+  apiKey: process.env.GOOGLE_API_KEY,
+  modelName: "embedding-001",
 });
 
-const prompt = ChatPromptTemplate.fromTemplate(`
-  context: {context} 
-  answer the user's question :{input}
-  `);
+const createStore = async (docs) =>
+  await MemoryVectorStore.fromDocuments(docs, geminiEmbeddings);
+
+const loader = new CheerioWebBaseLoader(
+  "https://developer.mozilla.org/en-US/docs/Web/JavaScript/"
+);
+
+const docs = await loader.load();
+//thats a problem bcs now we are loading the entire page and we are charged for this
+// so we need to include only the peices of text that are relevant
+
+const textSplitter = new RecursiveCharacterTextSplitter({
+  chunkSize: 400,
+  separator: ". ",
+  chunkOverlap: 80,
+});
+
+//array of documents
+const docsSplit = await textSplitter.splitDocuments(docs);
+
+// so what we want is to pass only the relevant chunks to the llm
+//but to do so we need to use vector store
+//vector store : its like a database that allow us to store and search based on the meaning of the data
+// `semantic search`
+const vectorStore = await createStore(docsSplit);
+const query = async () => {
+  const results = await vectorStore.similaritySearch(question, 2); // Get more results
+  // const results = await vectorStore.asRetriever({
+  //   k: 4,
+  // });
+  const response = await genAI.getGenerativeModel({ model }).generateContent({
+    contents: [
+      {
+        role: "user",
+        parts: [
+          {
+            text: `Use the following context and answer the user's question
+            and  show basic code example and one harder example than usage of the thing you are explaining
+            than provide some helpful problem solving website that he can test his knowlodge on
+            if the user ask about something out of the context of javascript , just say you are designed to help with javascript only!.
+            if the question is "no question was given" say ask me a question
+
+            Question: ${question}
+    
+                 context : ${results.map((r) => r.pageContent).join("\n")}`,
+          },
+        ],
+      },
+    ],
+  });
+  if (question == "no question was given") {
+    console.log(`Answer: ${response.response.text()}`);
+  } else {
+    console.log(
+      `Answer: ${response.response.text()}\n\nSources:\n ${results
+        .map((r) => r.metadata.source)
+        .join("\n")}`
+    );
+  }
+};
+query();
+
+// const model = new ChatGoogleGenerativeAI({
+//   model: "gemini-2.0-flash-exp",
+//   temperature: 0.7,
+//   verbose: true,
+//   maxOutputTokens: 1000,
+// });
+
+// const prompt = ChatPromptTemplate.fromTemplate(`
+//   context: {context}
+//   answer the user's question :{input}
+//   `);
+
 // const chain = prompt.pipe(model);
-const chain = await createStuffDocumentsChain({
-  llm: model,
-  prompt: prompt,
-});
-//documents
-const documenta = new Document({
-  pageContent: `
-  A web browser provides an ECMAScript host environment for client-side computation including, for instance, objects that represent windows, menus, pop-ups, dialog boxes, text areas, anchors, frames, history, cookies, and input/output. Further, the host environment provides a means to attach scripting code to events such as change of focus, page and image loading, unloading, error and abort, selection, form submission, and mouse actions. Scripting code appears within the HTML and the displayed page is a combination of user interface elements and fixed and computed text and images. The scripting code is reactive to user interaction, and there is no need for a main program.
+// const chain = await createStuffDocumentsChain({
+//   llm: model,
+//   prompt: prompt,
+// });
 
-A web server provides a different host environment for server-side computation including objects representing requests, clients, and files; and mechanisms to lock and share data. By using browser-side and server-side scripting together, it is possible to distribute computation between the client and server while providing a customized user interface for a Web-based application.
-
-Each Web browser and server that supports ECMAScript supplies its own host environment, completing the ECMAScript execution environment.
-  `,
-  metadata: { source: "https://tc39.es/ecma262/#sec-web-scripting" },
-});
-
-const res = await chain.invoke({
-  input: "what's web browser on es25",
-  context: [documenta],
-});
-console.log(res);
+// const res = await chain.invoke({
+//   input: "explain me what is the isNaN function in javascript how it works ",
+//   context: docsSplit,
+// });

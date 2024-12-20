@@ -34,6 +34,11 @@ we did  string , array , structured output parser : object , more complex using 
 to talk about something he cant answer we need to use RETRIEVAL CHAINS
 -we need to do retrieval to feed the llm with context of a page
 so we use documents and chain that allw us to use these documents as array
+- the documents should not be manually created , instead we need to scrape the website or anything 
+and then create the documents --document loader-- 
+ 
+- we needed to use text splitter to split the text into chunks and send only the relevant chunks to the llm
+
 
 #########################
 for now we could create a model ask it generic questions, used prompt templates and 
