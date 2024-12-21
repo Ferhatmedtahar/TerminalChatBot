@@ -15,6 +15,7 @@
     "@langchain/community": "^0.3.19",
     "@langchain/core": "^0.3.24",
     "@langchain/google-genai": "^0.1.5",
+    "@tavily/core": "^0.0.2",
     "cheerio": "^1.0.0",
     "dotenv": "^16.4.7",
     "langchain": "^0.3.7",
