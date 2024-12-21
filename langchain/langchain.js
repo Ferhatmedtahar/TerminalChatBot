@@ -51,8 +51,11 @@ controlled our output than we teach the model using documents and retrieval chai
 
 #########################
 
-- now we will add chat history
+- now we will add chat history to be able to have a conversation context 
+- the chat history is array of objects that have a spesific schema
+- we can do that using the template fromMessages 
 
+-self reasoning Agent with Tools
 */
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import "dotenv/config";
