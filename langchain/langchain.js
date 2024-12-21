@@ -62,6 +62,14 @@ for now we learned how to creatre chains that follow pre determined sequence spe
 agent : we can give it instruction and  dynamically determine the action to take and the sequence to follow
 and we can assign tools to an agent and he will know when to use to complete the task 
 
+we created and agent and tools 
+
+--
+
+now long term conversation Memory
+
+runnable sequence : we can use it to create chains that follow a predefined sequence
+connected to data base
 
 */
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
