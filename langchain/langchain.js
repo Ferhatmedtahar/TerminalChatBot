@@ -55,7 +55,14 @@ controlled our output than we teach the model using documents and retrieval chai
 - the chat history is array of objects that have a spesific schema
 - we can do that using the template fromMessages 
 
+#########################
 -self reasoning Agent with Tools
+for now we learned how to creatre chains that follow pre determined sequence specified by us 
+
+agent : we can give it instruction and  dynamically determine the action to take and the sequence to follow
+and we can assign tools to an agent and he will know when to use to complete the task 
+
+
 */
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import "dotenv/config";
