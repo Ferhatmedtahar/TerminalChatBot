@@ -20,6 +20,7 @@
     "@upstash/redis": "^1.34.3",
     "cheerio": "^1.0.0",
     "dotenv": "^16.4.7",
+    "flowise": "^1.6.0",
     "langchain": "^0.3.7",
     "youtube-transcript": "^1.2.1",
     "youtubei.js": "^9.4.0"
